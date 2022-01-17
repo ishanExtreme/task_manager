@@ -110,9 +110,3 @@ Completed : 3
 
 Run the test.py file to test if your submission is correct.
 The test.py file will run your program and compare the output with the expected output. Any errors in your implementation will be displayed.
-
-## Submission
-
-You can find the incomplete code and the instructions to complete it in the following GitHub repository. ( Fork this repo to get started )
-
-https://github.com/DjangoForAll/GDC-Level-2-Milestone
