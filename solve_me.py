@@ -128,7 +128,27 @@ $ python tasks.py report # Statistics"""
 
 
     def delete(self, args):
-        pass
+        """
+        Delete a task
+    
+        Use the del command to remove an item by its index.
+    
+        Parameters:
+        args: list of arguments
+
+        """
+
+        if(len(args) < 1):
+             print("Error: Missing NUMBER for deleting tasks.")
+        else:
+            try:
+                index = int(args[0])
+                self.current_items.pop(index)
+                self.write_current()
+                print(f"Deleted item with priority {index}")
+        
+            except:
+                print(f"Error: item with priority {index} does not exist. Nothing deleted.")
 
     def ls(self):
         pass
