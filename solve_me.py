@@ -151,7 +151,23 @@ $ python tasks.py report # Statistics"""
                 print(f"Error: item with priority {index} does not exist. Nothing deleted.")
 
     def ls(self):
-        pass
+        """
+        list tasks
+    
+        Use the ls command to see all the items that are not yet complete, in ascending order of priority.
+    
+        Parameters:
+        args: list of arguments
+    
+        """
+
+        # empty list
+        if(len(self.current_items) == 0):
+            print("There are no pending tasks!")
+        count = 1
+        for key in self.current_items:
+            print(f"{count}. {self.current_items[key]} [{key}]")
+            count+=1
 
     def report(self):
         pass
