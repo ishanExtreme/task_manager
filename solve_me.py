@@ -156,9 +156,6 @@ $ python tasks.py report # Statistics"""
     
         Use the ls command to see all the items that are not yet complete, in ascending order of priority.
     
-        Parameters:
-        args: list of arguments
-    
         """
 
         # empty list
@@ -170,4 +167,23 @@ $ python tasks.py report # Statistics"""
             count+=1
 
     def report(self):
-        pass
+        """
+        Generate report
+    
+        Show the number of complete and incomplete items in the list. and the complete and incomplete items grouped together.
+    
+        """
+
+        # incomplete tasks
+        print(f"Pending : {len(self.current_items)}")
+        # print pending tasks
+        count = 1
+        for key in self.current_items:
+            print(f"{count}. {self.current_items[key]} [{key}]")
+            count+=1
+        
+        # complete tasks
+        print(f"\nCompleted : {len(self.completed_items)}")
+        # print completed tasks
+        for index,task in enumerate(self.completed_items):
+            print(f"{index+1}. {task}") 
