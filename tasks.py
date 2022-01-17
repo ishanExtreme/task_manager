@@ -16,4 +16,4 @@ try:
     # Run the Task Command Class with the arguments supplied
     TasksCommand().run(command, arguments)
 except Exception as e:
-    print("HERE"+str(e))
+    print(str(e))
