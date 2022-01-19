@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
-
+from incomplete_task import render_route_tasks
+from complete_task import render_route_completed
 
 class TasksCommand:
     TASKS_FILE = "tasks.txt"
@@ -21,7 +22,7 @@ class TasksCommand:
     def read_completed(self):
         try:
             file = open(self.COMPLETED_TASKS_FILE, "r")
-            self.completed_items = file.readlines()
+            self.completed_items = [task[0:-1] for task in file.readlines()]
             file.close()
         except Exception:
             pass
@@ -196,22 +197,29 @@ $ python tasks.py runserver # Starts the tasks management server"""
         # print completed tasks
         for index,task in enumerate(self.completed_items):
             print(f"{index+1}. {task}") 
-
+            
     def render_pending_tasks(self):
         # Complete this method to return all incomplete tasks as HTML
-        return "<h1> Show Incomplete Tasks Here </h1>"
+        return render_route_tasks(self.current_items)
 
     def render_completed_tasks(self):
+        
         # Complete this method to return all completed tasks as HTML
-        return "<h1> Show Completed Tasks Here </h1>"
+        return render_route_completed(self.completed_items)
 
 
-class TasksServer(TasksCommand, BaseHTTPRequestHandler):
+class TasksServer(BaseHTTPRequestHandler):
     def do_GET(self):
         task_command_object = TasksCommand()
+        task_command_object.read_current()
+        task_command_object.read_completed()
+        # if self.path == "/":
+        #     content = render_home()
         if self.path == "/tasks":
+            print(task_command_object.current_items)
             content = task_command_object.render_pending_tasks()
         elif self.path == "/completed":
+            print(task_command_object.completed_items)
             content = task_command_object.render_completed_tasks()
         else:
             self.send_response(404)
