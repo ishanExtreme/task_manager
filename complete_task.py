@@ -5,7 +5,6 @@ def render_route_completed(taskList):
     <div style="display: flex; flex-flow: column wrap; justify-content: center; align-items: center;">
 
     """
-    print(taskList)
     for task in taskList:
         newTask = f"""
         <h3 style="color: green;">

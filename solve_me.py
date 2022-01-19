@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from incomplete_task import render_route_tasks
 from complete_task import render_route_completed
+from home import render_home
 
 class TasksCommand:
     TASKS_FILE = "tasks.txt"
@@ -213,13 +214,14 @@ class TasksServer(BaseHTTPRequestHandler):
         task_command_object = TasksCommand()
         task_command_object.read_current()
         task_command_object.read_completed()
-        # if self.path == "/":
-        #     content = render_home()
-        if self.path == "/tasks":
-            print(task_command_object.current_items)
+        print(self.path)
+        if self.path == "/" or self.path == "":
+            content = render_home()
+        elif self.path == "/tasks":
+            # print(task_command_object.current_items)
             content = task_command_object.render_pending_tasks()
         elif self.path == "/completed":
-            print(task_command_object.completed_items)
+            # print(task_command_object.completed_items)
             content = task_command_object.render_completed_tasks()
         else:
             self.send_response(404)
