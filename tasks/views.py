@@ -44,3 +44,10 @@ def display_completed_tasks(request):
     Displays completed tasks
     """
     return render(request, "completed.html", {"tasks": complete})
+
+
+def display_all_tasks(request):
+    """
+    Displays both pending and completed tasks
+    """
+    return render(request, "all_task.html", {"complete": complete, "pending": tasks})
