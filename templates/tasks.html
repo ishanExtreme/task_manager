@@ -1,14 +1,20 @@
-<h1>Task Management System</h1>
-
-<form action="/add-task" method="get">
-    <input type="text" name="task"/>
-    <button type="submit">Add Task</button>
-</form>
-
-<h1>Tasks</h1>
-
-{%for task in tasks%}
-{{forloop.counter}} . {{task}}
-<a href="/delete-task/{{forloop.counter}}">delete task</a>
+<h1 style="text-align: center; color: goldenrod">Task Management System</h1>
 <br/>
-{%endfor%}
+<div style="display: flex; flex-flow: column wrap; justify-content: center; align-items: center;">
+    <form action="/add-task" method="get">
+        <input type="text" name="task"/>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h2 style="color: indianred;">Tasks</h2>
+
+    {%for task in tasks%}
+
+            <h3 style="color: steelblue;">
+            {{forloop.counter}} . {{task}}
+            </h3>
+            <button style="padding: 10px;border-radius: 5px;background-color: red;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/delete-task/{{forloop.counter}}'">Delete Task</button>
+            <button style="padding: 10px;border-radius: 5px;background-color: green;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href=''">Mark Complete</button>
+            <hr style="width:50%;">
+    {%endfor%}
+</div>
