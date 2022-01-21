@@ -1,0 +1,18 @@
+<h1 style="text-align: center; color: goldenrod">Task Management System</h1>
+<br/>
+<div style="display: flex; flex-flow: column wrap; justify-content: center; align-items: center;">
+    <form action="/add-task" method="get">
+        <input type="text" name="task"/>
+        <button type="submit">Add Task</button>
+    </form>
+    <button style="padding: 10px;border-radius: 5px;background-color: steelblue;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/tasks'">Pending Tasks</button>
+    <h2 style="color: indianred;">Complete Tasks</h2>
+
+    {%for task in tasks%}
+
+            <h3 style="color: steelblue;">
+            {{forloop.counter}} . {{task}}
+            </h3>
+            <hr style="width:50%;">
+    {%endfor%}
+</div>
