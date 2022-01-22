@@ -6,13 +6,17 @@
         <input type="text" name="task"/>
         <button type="submit">Add Task</button>
     </form>
+    <form action="" method="get">
+        <input type="text" name="search"/>
+        <button type="submit">Search Task</button>
+    </form>
     <button style="padding: 10px;border-radius: 5px;background-color: steelblue;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/tasks'">Pending Tasks</button>
     <h2 style="color: green;">Completed Tasks</h2>
 
     {%for task in tasks%}
 
             <h3 style="color: steelblue;">
-            {{forloop.counter}} . {{task}}
+            {{forloop.counter}} . {{task.title}}
             </h3>
             <hr style="width:50%;">
     {%endfor%}

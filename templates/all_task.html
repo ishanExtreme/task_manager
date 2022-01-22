@@ -30,7 +30,7 @@
 
   {%for task in pending%}
 
-  <h3 style="color: steelblue">{{forloop.counter}} . {{task}}</h3>
+  <h3 style="color: steelblue">{{forloop.counter}} . {{task.title}} - {{task.created_date}}</h3>
   <button
     style="
       padding: 10px;
@@ -41,7 +41,7 @@
       margin-top: 5px;
       margin-bottom: 5px;
     "
-    onclick="window.location.href='/delete-task/{{forloop.counter}}'"
+    onclick="window.location.href='/delete-task/{{task.id}}'"
   >
     Delete Task
   </button>
@@ -55,7 +55,7 @@
       margin-top: 5px;
       margin-bottom: 5px;
     "
-    onclick="window.location.href='/complete_task/{{forloop.counter}}'"
+    onclick="window.location.href='/complete_task/{{task.id}}'"
   >
     Mark Complete
   </button>
@@ -66,7 +66,7 @@
 
   {%for task in complete%}
 
-  <h3 style="color: steelblue">{{forloop.counter}} . {{task}}</h3>
+  <h3 style="color: steelblue">{{forloop.counter}} . {{task.title}}</h3>
   <hr style="width: 50%" />
   {%endfor%}
 </div>
