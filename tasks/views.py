@@ -7,9 +7,16 @@ def add_task(request):
     """
     Add a new task to the model
     """
+    # if called from /tasks route
     task_value = request.GET.get("task")
-    Task(title=task_value).save()
-    return HttpResponseRedirect("/tasks")
+    # if called from /all_task route
+    tas_value_all = request.GET.get("all_task")
+    if task_value:
+        Task(title=task_value).save()
+        return HttpResponseRedirect("/tasks")
+    else:
+        Task(title=tas_value_all).save()
+        return HttpResponseRedirect("/all_tasks")
 
 
 def display_tasks(request):
@@ -26,22 +33,24 @@ def display_tasks(request):
     return render(request, "tasks.html", {"tasks": tasks})
 
 
-def delete_task(request, index):
+def delete_task(request, index, route="tasks"):
     """
     Delete task from the list. Takes primary key of the task as parameter
+    and route specifies the redirection path(all_task or tasks)
     """
     # soft delete the task
     Task.objects.filter(id=index).update(deleted=True)
-    return HttpResponseRedirect("/tasks")
+    return HttpResponseRedirect(f"/{route}")
 
 
-def mark_complete(request, index):
+def mark_complete(request, index, route="tasks"):
     """
     Marks task as complete by removing it from taks list and
     adding it to complete list. Takes primary key of the task as parameter
+    and route specifies the redirection path(all_task or tasks)
     """
     Task.objects.filter(id=index).update(completed=True)
-    return HttpResponseRedirect("/tasks")
+    return HttpResponseRedirect(f"/{route}")
 
 
 def display_completed_tasks(request):

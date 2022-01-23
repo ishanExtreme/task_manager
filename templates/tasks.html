@@ -18,8 +18,8 @@
             <h3 style="color: steelblue;">
             {{forloop.counter}} . {{task.title}} - {{task.created_date}}
             </h3>
-            <button style="padding: 10px;border-radius: 5px;background-color: red;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/delete-task/{{task.id}}'">Delete Task</button>
-            <button style="padding: 10px;border-radius: 5px;background-color: green;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/complete_task/{{task.id}}'">Mark Complete</button>
+            <button style="padding: 10px;border-radius: 5px;background-color: red;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/delete-task/{{task.id}}/tasks'">Delete Task</button>
+            <button style="padding: 10px;border-radius: 5px;background-color: green;color: white; cursor: pointer; margin-top: 5px; margin-bottom: 5px;" onclick="window.location.href='/complete_task/{{task.id}}/tasks'">Mark Complete</button>
             <hr style="width:50%;">
     {%endfor%}
 </div>

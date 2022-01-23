@@ -9,7 +9,7 @@
   "
 >
   <form action="/add-task" method="get">
-    <input type="text" name="task" />
+    <input type="text" name="all_task" />
     <button type="submit">Add Task</button>
   </form>
   <button
@@ -41,7 +41,7 @@
       margin-top: 5px;
       margin-bottom: 5px;
     "
-    onclick="window.location.href='/delete-task/{{task.id}}'"
+    onclick="window.location.href='/delete-task/{{task.id}}/all_tasks'"
   >
     Delete Task
   </button>
@@ -55,7 +55,7 @@
       margin-top: 5px;
       margin-bottom: 5px;
     "
-    onclick="window.location.href='/complete_task/{{task.id}}'"
+    onclick="window.location.href='/complete_task/{{task.id}}/all_tasks'"
   >
     Mark Complete
   </button>
