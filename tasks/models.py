@@ -9,6 +9,7 @@ class Task(models.Model):
     created_date = models.DateTimeField(auto_now=True)
     deleted = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    priority = models.IntegerField()
 
     def __str__(self):
         return self.title

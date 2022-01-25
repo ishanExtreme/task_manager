@@ -26,3 +26,9 @@ class UserLoginView(LoginView):
         # Add in a QuerySet of all the books
         context["f_heading"] = "Login"
         return context
+
+
+# class
+
+
+# class DisplayTaksView()
