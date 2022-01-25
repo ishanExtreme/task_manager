@@ -21,6 +21,7 @@ from tasks.views import (
     LogoutView,
     TaskListView,
     TaskDeleteView,
+    AddTaskView,
 )
 
 
@@ -31,4 +32,5 @@ urlpatterns = [
     path("user/logout/", LogoutView.as_view()),
     path("tasks/", TaskListView.as_view()),
     path("delete-task/<pk>/", TaskDeleteView.as_view()),
+    path("create-task/", AddTaskView.as_view()),
 ]

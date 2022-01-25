@@ -1,11 +1,12 @@
-from re import template
+from django.http import HttpResponseRedirect
 from tasks.models import Task
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.list import ListView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import ModelForm, ValidationError
 
 
 class UserCreationView(CreateView):
@@ -44,7 +45,9 @@ class TaskListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         filter = self.request.GET.get("filter")
-        tasks = Task.objects.filter(deleted=False, user=self.request.user)
+        tasks = Task.objects.filter(deleted=False, user=self.request.user).order_by(
+            "priority"
+        )
         if filter:
             if filter == "pending":
                 tasks = tasks.filter(completed=False)
@@ -69,6 +72,57 @@ class TaskListView(LoginRequiredMixin, ListView):
         if filter:
             context["filter"] = filter
         return context
+
+
+class TaskCreateForm(ModelForm):
+    def clean_title(self):
+        title = self.cleaned_data["title"]
+        if len(title) < 10:
+            raise ValidationError("Data too small")
+        return title.upper()
+
+    def clean_priority(self):
+        # Set the right priority
+        priority = self.cleaned_data["priority"]
+        inc_priority = priority
+        curr_id = None
+        while True:
+            found = False
+            if (
+                Task.objects.filter(deleted=False, priority=inc_priority)
+                .exclude(id=curr_id)
+                .exists()
+            ):
+
+                task = Task.objects.exclude(id=curr_id).get(
+                    deleted=False, priority=inc_priority
+                )
+                task.priority = inc_priority + 1
+                task.save()
+
+                inc_priority += 1
+                curr_id = task.id
+                found = True
+            if not found:
+                break
+        return priority
+
+    class Meta:
+        model = Task
+        fields = ["title", "description", "completed", "priority"]
+
+
+class AddTaskView(CreateView):
+    form_class = TaskCreateForm
+    template_name = "task_form.html"
+    success_url = "/tasks"
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.user = self.request.user
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class TaskDeleteView(AuthorizedTaskManager, DeleteView):

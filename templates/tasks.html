@@ -36,7 +36,7 @@
                     my-2
                     focus:border-transparent
                     {%if filter is None%}
-                    bg-rose-500
+                    bg-orange-600
                     {%endif%}
                     "
                     >All</a>
@@ -57,7 +57,7 @@
                     hover:border-transparent hover:bg-gray-100
                     focus:border-transparent
                     {%if filter == 'pending'%}
-                    bg-rose-500
+                    bg-orange-600
                     {%endif%}
                     "
                     
@@ -79,7 +79,7 @@
                     hover:border-transparent hover:bg-gray-100
                     focus:border-transparent
                     {%if filter == 'completed'%}
-                    bg-rose-500
+                    bg-orange-600
                     {%endif%}
                     ">Completed</a>
                 </li>
@@ -100,13 +100,16 @@
                         </div>
                         <div class="flex flex-col space-y-1">
                             <button type="button" class=" inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Edit</button>
-                            <button onclick="window.location.href='/delete-task/{{task.id}}'" type="button" class=" inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Delete</button>
+                            <button onclick="window.location.href='/delete-task/{{task.id}}'" type="button" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Delete</button>
                         </div>
                     </div>
                     {%endfor%}
                 </div>
                 
-              
+                <!-- Add button -->
+                <button onclick="window.location.href='/create-task'" type="button" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-lg font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                ADD +
+                </button>
                 
 
             </div>
