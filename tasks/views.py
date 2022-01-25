@@ -1,12 +1,17 @@
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from tasks.models import Task
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.list import ListView
-from django.views.generic.edit import DeleteView, CreateView
+from django.views.generic.edit import DeleteView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import ModelForm, ValidationError
+
+
+def home_view(request):
+    return render(request, "home.html")
 
 
 class UserCreationView(CreateView):
@@ -112,7 +117,7 @@ class TaskCreateForm(ModelForm):
         fields = ["title", "description", "completed", "priority"]
 
 
-class AddTaskView(CreateView):
+class AddTaskView(LoginRequiredMixin, CreateView):
     form_class = TaskCreateForm
     template_name = "task_form.html"
     success_url = "/tasks"
@@ -129,6 +134,19 @@ class AddTaskView(CreateView):
         context = super().get_context_data(**kwargs)
         # Add heading
         context["f_heading"] = "Add Task"
+        return context
+
+
+class UpdateTaskView(AuthorizedTaskManager, UpdateView):
+    form_class = TaskCreateForm
+    template_name = "task_form.html"
+    success_url = "/tasks"
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add heading
+        context["f_heading"] = "Update Task"
         return context
 
 

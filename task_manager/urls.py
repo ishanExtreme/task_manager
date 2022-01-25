@@ -22,15 +22,19 @@ from tasks.views import (
     TaskListView,
     TaskDeleteView,
     AddTaskView,
+    UpdateTaskView,
+    home_view,
 )
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", home_view),
     path("user/signup/", UserCreationView.as_view()),
     path("user/login/", UserLoginView.as_view()),
     path("user/logout/", LogoutView.as_view()),
     path("tasks/", TaskListView.as_view()),
     path("delete-task/<pk>/", TaskDeleteView.as_view()),
+    path("update-task/<pk>/", UpdateTaskView.as_view()),
     path("create-task/", AddTaskView.as_view()),
 ]
