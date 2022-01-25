@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from tasks.views import UserCreationView, UserLoginView, LogoutView
+from tasks.views import UserCreationView, UserLoginView, LogoutView, TaskListView
 
 
 urlpatterns = [
@@ -23,4 +23,5 @@ urlpatterns = [
     path("user/signup", UserCreationView.as_view()),
     path("user/login", UserLoginView.as_view()),
     path("user/logout", LogoutView.as_view()),
+    path("tasks/", TaskListView.as_view()),
 ]
