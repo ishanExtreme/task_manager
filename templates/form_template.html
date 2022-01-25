@@ -24,7 +24,7 @@
                             <div class="font-serif text-sm italic text-rose-500">
                                 {{field.errors}}
                             </div>
-                            <input id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ field.html_name }}" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="{{ field.label }}">
+                            <input id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{field.field.widget.input_type}}" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="{{ field.label }}">
                             
                             <div class="font-serif text-sm italic text-sky-500">
                                 {{field.help_text}}
