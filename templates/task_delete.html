@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body>
+        <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                    <form action="" method="post">
+                        {%csrf_token%}
+                        <div class="flex items-center justify-center flex-col p-6 rounded-lg shadow-lg bg-white max-w-sm">
+                        <h5 class="text-gray-900 text-xl leading-tight font-medium mb-2">Confirmation Page</h5>
+                        <p class="text-gray-700 text-base mb-4">
+                            Are you sure you want to delete "{{object}}"?
+                        </p>
+                        <button type="submit" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Confirm</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </body>
+</html>

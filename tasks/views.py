@@ -1,8 +1,10 @@
+from re import template
 from tasks.models import Task
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.list import ListView
+from django.views.generic.edit import DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
@@ -32,7 +34,7 @@ class UserLoginView(LoginView):
 
 class AuthorizedTaskManager(LoginRequiredMixin):
     def get_queryset(self):
-        return Task.objects.filter(delete=False, user=self.request.user)
+        return Task.objects.filter(deleted=False, user=self.request.user)
 
 
 class TaskListView(LoginRequiredMixin, ListView):
@@ -67,6 +69,12 @@ class TaskListView(LoginRequiredMixin, ListView):
         if filter:
             context["filter"] = filter
         return context
+
+
+class TaskDeleteView(AuthorizedTaskManager, DeleteView):
+    model = Task
+    template_name = "task_delete.html"
+    success_url = "/tasks"
 
 
 # class DisplayTaksView()
