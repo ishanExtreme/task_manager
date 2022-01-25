@@ -124,6 +124,13 @@ class AddTaskView(CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add heading
+        context["f_heading"] = "Add Task"
+        return context
+
 
 class TaskDeleteView(AuthorizedTaskManager, DeleteView):
     model = Task
