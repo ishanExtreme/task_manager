@@ -8,6 +8,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import DeleteView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import ModelForm, ValidationError
+from django.db import transaction
 
 
 def home_view(request):
@@ -86,32 +87,6 @@ class TaskCreateForm(ModelForm):
             raise ValidationError("Data too small")
         return title.upper()
 
-    def clean_priority(self):
-        # Set the right priority
-        priority = self.cleaned_data["priority"]
-        inc_priority = priority
-        curr_id = None
-        while True:
-            found = False
-            if (
-                Task.objects.filter(deleted=False, priority=inc_priority)
-                .exclude(id=curr_id)
-                .exists()
-            ):
-
-                task = Task.objects.exclude(id=curr_id).get(
-                    deleted=False, priority=inc_priority
-                )
-                task.priority = inc_priority + 1
-                task.save()
-
-                inc_priority += 1
-                curr_id = task.id
-                found = True
-            if not found:
-                break
-        return priority
-
     class Meta:
         model = Task
         fields = ["title", "description", "completed", "priority"]
@@ -123,9 +98,35 @@ class AddTaskView(LoginRequiredMixin, CreateView):
     success_url = "/tasks"
 
     def form_valid(self, form):
+        # get form model
         self.object = form.save()
+        # save currect user into user field
         self.object.user = self.request.user
         self.object.save()
+        # handle priority logic
+        inc_priority = self.object.priority
+        # get all tasks with priority greater than equal to current priority
+        tasks = (
+            Task.objects.filter(
+                deleted=False,
+                user=self.request.user,
+                completed=False,
+                priority__gte=inc_priority,
+            )
+            .exclude(id=self.object.id)  # exclude current object
+            .order_by("priority")
+        )
+
+        # atomic transaction so that all increment takes place if one of them fails
+        # whole increment roll backs to original format
+        with transaction.atomic():
+            for task in tasks:
+                if task.priority == inc_priority:
+                    task.priority += 1
+                    task.save()
+                    inc_priority += 1
+                else:
+                    break
 
         return HttpResponseRedirect(self.get_success_url())
 
