@@ -143,6 +143,37 @@ class UpdateTaskView(AuthorizedTaskManager, UpdateView):
     template_name = "task_form.html"
     success_url = "/tasks"
 
+    # handling priority logic in updation
+    def form_valid(self, form):
+
+        self.object = form.save()
+        # handle priority logic
+        inc_priority = self.object.priority
+        # get all tasks with priority greater than equal to current priority
+        tasks = (
+            Task.objects.filter(
+                deleted=False,
+                user=self.request.user,
+                completed=False,
+                priority__gte=inc_priority,
+            )
+            .exclude(id=self.object.id)  # exclude current object
+            .order_by("priority")
+        )
+
+        # atomic transaction so that all increment takes place if one of them fails
+        # whole increment roll backs to original format
+        with transaction.atomic():
+            for task in tasks:
+                if task.priority == inc_priority:
+                    task.priority += 1
+                    task.save()
+                    inc_priority += 1
+                else:
+                    break
+
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
