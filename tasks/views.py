@@ -65,11 +65,16 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # count complete and incomplete tasks
-        complete_count = Task.objects.filter(
-            deleted=False, user=self.request.user, completed=True
-        ).count()
-        total_count = Task.objects.filter(deleted=False, user=self.request.user).count()
+        # count complete and incomplete tasks(UPDATED)
+        # -------- WRONG WAY REQUIRES QUERYING TWO TIME OVER WHOLE DATABASE --------
+        # complete_count = Task.objects.filter(
+        #     deleted=False, user=self.request.user, completed=True
+        # ).count()
+        # total_count = Task.objects.filter(deleted=False, user=self.request.user).count()
+        # -------- Efficiend WAY -------------
+        base_qs = Task.objects.filter(deleted=False, user=self.request.user)
+        complete_count = base_qs.filter(completed=True).count()
+        total_count = base_qs.count()
         context["complete_count"] = complete_count
         context["total_count"] = total_count
 
