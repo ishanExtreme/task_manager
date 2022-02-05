@@ -91,7 +91,7 @@ def handle_priority(sender, instance, *args, **kwargs):
                 )
 
 
-# update prev_state of a task
+# update prev_state field of task instance
 @receiver(pre_save, sender=Task)
 def update_prev_state(sender, instance, *args, **kwargs):
 
@@ -103,6 +103,8 @@ def update_prev_state(sender, instance, *args, **kwargs):
         instance.set_prev_state(prev_task_instance.status)
     # if we are creating a task for first time
     else:
+        # we choose prev_state to be pending for a first time
+        # task creation
         instance.set_prev_state(Task.STATUS_CHOICES[0][0])
 
 
@@ -117,6 +119,8 @@ class History(models.Model):
         return f"{self.task.title} changed from '{self.previous_status}' to '{self.new_status}'"
 
 
+# now same instance is passed to post_save here we take out the prev_state private field
+# and create a new history object
 @receiver(post_save, sender=Task)
 def handle_history(sender, instance, created, *args, **kwargs):
 
