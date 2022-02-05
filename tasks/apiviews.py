@@ -27,7 +27,7 @@ class TaskSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["title", "description", "completed", "status", "user"]
+        fields = ["title", "description", "completed", "status", "user", "priority"]
 
 
 class HistorySerializer(ModelSerializer):
@@ -59,6 +59,8 @@ class TaskViewSet(ModelViewSet):
         return Task.objects.filter(deleted=False, user=self.request.user)
 
     def perform_create(self, serializer):
+        # serializer.user = self.request.user
+        # serializer.save()
         serializer.save(user=self.request.user)
 
 
