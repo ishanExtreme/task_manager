@@ -161,6 +161,8 @@ class AddScheduleView(LoginRequiredMixin, CreateView):
         self.object = form.save(commit=False)
         # save currect user into user field
         self.object.user = self.request.user
+        # Handles Case-4
+        self.object.email_sent = False
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
@@ -173,6 +175,7 @@ class AddScheduleView(LoginRequiredMixin, CreateView):
         return context
 
 
+# TODO: Restrict user to update schedule to next 5-10 minutes
 class UpdateScheduleView(LoginRequiredMixin, UpdateView):
     model = Schedule
     fields = ["hours", "minutes"]
@@ -190,6 +193,15 @@ class UpdateScheduleView(LoginRequiredMixin, UpdateView):
         # Add heading
         context["f_heading"] = "Schedule Report"
         return context
+
+    def form_valid(self, form):
+        # get form model
+        self.object = form.save(commit=False)
+        # Handles Case-4
+        self.object.email_sent = False
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 
 # class DisplayTaksView()
