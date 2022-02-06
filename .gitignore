@@ -168,5 +168,4 @@ cython_debug/
 
 .vscode
 # Celery
-# celerybeat*
-# dump.rdb
+celerybeat*
