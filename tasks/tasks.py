@@ -63,7 +63,7 @@ def send_email_async(user_id):
 # 12PM(current time) current logic can handle such update
 #  ----Case4----: If earlier schedule was 1PM and user updates schedule to 3PM at
 # 2PM(current time) this will not send email again to user at 3 as email_sent will be
-# false for this every time user updates schedule set email_sent to true
+# false for this every time user updates schedule set email_sent to false
 @periodic_task(run_every=timedelta(seconds=60))
 def schedule_worker():
     curr_time = datetime.now()
