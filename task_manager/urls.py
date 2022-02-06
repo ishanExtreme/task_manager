@@ -13,7 +13,6 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from cgitb import lookup
 from django.contrib import admin
 from django.urls import path
 from tasks.views import (
@@ -25,6 +24,8 @@ from tasks.views import (
     AddTaskView,
     UpdateTaskView,
     home_view,
+    handle_schedule_request,
+    UpdateScheduleView,
 )
 
 from tasks.apiviews import TaskViewSet, HistroryViewSet
@@ -51,6 +52,8 @@ urlpatterns = (
         path("delete-task/<pk>/", TaskDeleteView.as_view()),
         path("update-task/<pk>/", UpdateTaskView.as_view()),
         path("create-task/", AddTaskView.as_view()),
+        path("update-schedule/<pk>/", UpdateScheduleView.as_view()),
+        path("report/", handle_schedule_request),
     ]
     + router.urls
     + history.urls

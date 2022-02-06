@@ -1,6 +1,7 @@
+from dataclasses import field
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from tasks.models import Task
+from tasks.models import Task, Schedule
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
 from django.contrib.auth.views import LoginView, LogoutView
@@ -135,6 +136,60 @@ class TaskDeleteView(AuthorizedTaskManager, DeleteView):
     model = Task
     template_name = "task_delete.html"
     success_url = "/tasks"
+
+
+# This will handle the schedule update request if schedule doesnot exists
+# it will create it for user and if it exists it will redirect user to that schedule
+def handle_schedule_request(request):
+
+    user_schedule = Schedule.objects.filter(user=request.user)
+    if user_schedule.exists():
+        user_schedule = user_schedule.first()
+        return HttpResponseRedirect(f"/update-schedule/{user_schedule.id}")
+    else:
+        return AddScheduleView.as_view()(request)
+
+
+class AddScheduleView(LoginRequiredMixin, CreateView):
+    model = Schedule
+    fields = ["hours", "minutes"]
+    success_url = "/tasks"
+    template_name = "form_template.html"
+
+    def form_valid(self, form):
+        # get form model
+        self.object = form.save(commit=False)
+        # save currect user into user field
+        self.object.user = self.request.user
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add heading
+        context["f_heading"] = "Schedule Report"
+        return context
+
+
+class UpdateScheduleView(LoginRequiredMixin, UpdateView):
+    model = Schedule
+    fields = ["hours", "minutes"]
+    success_url = "/tasks"
+    template_name = "form_template.html"
+
+    # In case anyone calls the url manually check if they are editing there own
+    # schedule
+    def get_queryset(self):
+        return Schedule.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add heading
+        context["f_heading"] = "Schedule Report"
+        return context
 
 
 # class DisplayTaksView()

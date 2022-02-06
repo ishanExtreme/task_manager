@@ -137,6 +137,7 @@ class Schedule(models.Model):
 
     hours = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(23)])
     minutes = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(59)])
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f"Schedule for {self.hours}:{self.minutes} daily"
