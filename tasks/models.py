@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db import transaction
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Task(models.Model):
@@ -130,3 +131,12 @@ def handle_history(sender, instance, created, *args, **kwargs):
         new_status=instance.status,
     )
     history.save()
+
+
+class Schedule(models.Model):
+
+    hours = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(23)])
+    minutes = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(59)])
+
+    def __str__(self):
+        return f"Schedule for {self.hours}:{self.minutes} daily"

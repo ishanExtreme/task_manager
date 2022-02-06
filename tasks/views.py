@@ -64,11 +64,16 @@ class TaskListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super().get_context_data(**kwargs)
-        # count complete and incomplete tasks
-        complete_count = Task.objects.filter(
-            deleted=False, user=self.request.user, completed=True
-        ).count()
-        total_count = Task.objects.filter(deleted=False, user=self.request.user).count()
+        # count complete and incomplete tasks(UPDATED)
+        # -------- Non-effiecient WAY REQUIRES QUERYING TWO TIME OVER WHOLE DATABASE --------
+        # complete_count = Task.objects.filter(
+        #     deleted=False, user=self.request.user, completed=True
+        # ).count()
+        # total_count = Task.objects.filter(deleted=False, user=self.request.user).count()
+        # -------- Efficiend WAY -------------
+        base_qs = Task.objects.filter(deleted=False, user=self.request.user)
+        complete_count = base_qs.filter(completed=True).count()
+        total_count = base_qs.count()
         context["complete_count"] = complete_count
         context["total_count"] = total_count
 
@@ -86,32 +91,6 @@ class TaskCreateForm(ModelForm):
             raise ValidationError("Data too small")
         return title.upper()
 
-    def clean_priority(self):
-        # Set the right priority
-        priority = self.cleaned_data["priority"]
-        inc_priority = priority
-        curr_id = None
-        while True:
-            found = False
-            if (
-                Task.objects.filter(deleted=False, priority=inc_priority)
-                .exclude(id=curr_id)
-                .exists()
-            ):
-
-                task = Task.objects.exclude(id=curr_id).get(
-                    deleted=False, priority=inc_priority
-                )
-                task.priority = inc_priority + 1
-                task.save()
-
-                inc_priority += 1
-                curr_id = task.id
-                found = True
-            if not found:
-                break
-        return priority
-
     class Meta:
         model = Task
         fields = ["title", "description", "completed", "priority"]
@@ -123,7 +102,9 @@ class AddTaskView(LoginRequiredMixin, CreateView):
     success_url = "/tasks"
 
     def form_valid(self, form):
-        self.object = form.save()
+        # get form model
+        self.object = form.save(commit=False)
+        # save currect user into user field
         self.object.user = self.request.user
         self.object.save()
 

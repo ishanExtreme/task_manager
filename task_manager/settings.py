@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
@@ -130,3 +130,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_REDIRECT_URL = "/tasks"
 LOGIN_URL = "/user/login"
 LOGOUT_REDIRECT_URL = "/"
+# broker is used to store pending tasks in a queue type structure
+# here we are using redis for that purpose
+BROKER_URL = "redis://localhost:6379"
+# result of the function can be stored using the result_backend
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+# email backend to send emails
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
