@@ -16,7 +16,7 @@ class Task(models.Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # private variable
-        self._prev_state = ""
+        self._prev_state = self.status
 
     title = models.CharField(max_length=100)
     description = models.TextField()
@@ -92,20 +92,20 @@ def handle_priority(sender, instance, *args, **kwargs):
 
 
 # update prev_state field of task instance
-@receiver(pre_save, sender=Task)
-def update_prev_state(sender, instance, *args, **kwargs):
+# @receiver(pre_save, sender=Task)
+# def update_prev_state(sender, instance, *args, **kwargs):
 
-    prev_task_instance = Task.objects.filter(id=instance.id)
+#     prev_task_instance = Task.objects.filter(id=instance.id)
 
-    # if the task is in database
-    if prev_task_instance.exists():
-        prev_task_instance = prev_task_instance.first()
-        instance.set_prev_state(prev_task_instance.status)
-    # if we are creating a task for first time
-    else:
-        # we choose prev_state to be pending for a first time
-        # task creation
-        instance.set_prev_state(Task.STATUS_CHOICES[0][0])
+#     # if the task is in database
+#     if prev_task_instance.exists():
+#         prev_task_instance = prev_task_instance.first()
+#         instance.set_prev_state(prev_task_instance.status)
+#     # if we are creating a task for first time
+#     else:
+#         # we choose prev_state to be pending for a first time
+#         # task creation
+#         instance.set_prev_state(Task.STATUS_CHOICES[0][0])
 
 
 class History(models.Model):
@@ -124,9 +124,14 @@ class History(models.Model):
 @receiver(post_save, sender=Task)
 def handle_history(sender, instance, created, *args, **kwargs):
 
-    history = History(
-        task=instance,
-        previous_status=instance.get_prev_state(),
-        new_status=instance.status,
-    )
-    history.save()
+    print("***************************************************")
+    print(instance.get_prev_state())
+    print("***************************************************")
+    # only create new history object is status is being changed
+    if instance.get_prev_state() != instance.status:
+        history = History(
+            task=instance,
+            previous_status=instance.get_prev_state(),
+            new_status=instance.status,
+        )
+        history.save()
