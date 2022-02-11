@@ -60,6 +60,8 @@ def send_email_async(user_id):
 # On updating the time if cuurent time is more than updated time
 # a mail is sent irrespective of current time from next day
 # it is sent at correct timings
+# TODO: Limit user to update schedule a certain number of times a day
+# to prevent email overloading on worker
 @periodic_task(run_every=timedelta(seconds=60))
 def schedule_worker():
     curr_time = make_aware(datetime.now())
