@@ -68,12 +68,12 @@ def schedule_worker():
         schedule__isnull=False,
     )
 
-    print(f"Step-1:{user_query}")
+    # print(f"Step-1:{user_query}")
     user_query = user_query.filter(
         Q(schedule__prev_sent_time__lte=curr_time - timedelta(days=1))
         | Q(schedule__prev_sent_time__isnull=True)
     ).filter(schedule__time__lte=curr_time.time())
-    print(f"Step-2,3:{user_query}")
+    # print(f"Step-2,3:{user_query}")
 
     for user in user_query:
         user_schedule = user.schedule
