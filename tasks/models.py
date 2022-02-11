@@ -124,8 +124,8 @@ def handle_history(sender, instance, created, *args, **kwargs):
 class Schedule(models.Model):
 
     time = models.TimeField(default="00:00:00")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    email_sent = models.BooleanField(default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    prev_sent_time = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"Schedule for {self.hours}:{self.minutes} daily"
+        return f"Schedule for {self.time.hour}:{self.time.minute} daily"

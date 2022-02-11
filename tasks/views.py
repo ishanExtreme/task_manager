@@ -9,6 +9,8 @@ from django.views.generic.edit import DeleteView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import ModelForm, ValidationError, TimeInput
 
+from django.contrib.auth.models import User
+
 
 def home_view(request):
     return render(request, "home.html")
@@ -155,7 +157,8 @@ class ScheduleForm(ModelForm):
         model = Schedule
         fields = ["time"]
         # Change type from text to time
-        widgets = {"time": TimeInput(attrs={"type": "time"})}
+        # Wrong render of time in update view if using widget
+        # widgets = {"time": TimeInput(attrs={"type": "time"})}
 
 
 class SheduleManager(LoginRequiredMixin):
@@ -183,8 +186,8 @@ class AddScheduleView(SheduleManager, CreateView):
         self.object = form.save(commit=False)
         # save currect user into user field
         self.object.user = self.request.user
-        # Handles Case-4
-        self.object.email_sent = False
+        # reset prev_sent_time
+        self.object.prev_sent_time = None
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
@@ -199,8 +202,8 @@ class UpdateScheduleView(SheduleManager, UpdateView):
     def form_valid(self, form):
         # get form model
         self.object = form.save(commit=False)
-        # Handles Case-4
-        self.object.email_sent = False
+        # reset prev_sent_time
+        self.object.prev_sent_time = None
         self.object.save()
 
         return HttpResponseRedirect(self.get_success_url())
