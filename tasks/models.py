@@ -3,7 +3,6 @@ from django.db import models
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.db import transaction
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Task(models.Model):
@@ -124,8 +123,7 @@ def handle_history(sender, instance, created, *args, **kwargs):
 
 class Schedule(models.Model):
 
-    hours = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(23)])
-    minutes = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(59)])
+    time = models.TimeField(default="00:00:00")
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     email_sent = models.BooleanField(default=False)
 

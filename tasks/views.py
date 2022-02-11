@@ -1,4 +1,3 @@
-from dataclasses import field
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from tasks.models import Task, Schedule
@@ -8,7 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic.list import ListView
 from django.views.generic.edit import DeleteView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, TimeInput
 
 
 def home_view(request):
@@ -150,9 +149,32 @@ def handle_schedule_request(request):
         return AddScheduleView.as_view()(request)
 
 
-class AddScheduleView(LoginRequiredMixin, CreateView):
-    model = Schedule
-    fields = ["hours", "minutes"]
+# Schedule generic form
+class ScheduleForm(ModelForm):
+    class Meta:
+        model = Schedule
+        fields = ["time"]
+        # Change type from text to time
+        widgets = {"time": TimeInput(attrs={"type": "time"})}
+
+
+class SheduleManager(LoginRequiredMixin):
+
+    # In case anyone calls the url manually check if they are editing there own
+    # schedule
+    def get_queryset(self):
+        return Schedule.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add heading
+        context["f_heading"] = "Schedule Report"
+        return context
+
+
+class AddScheduleView(SheduleManager, CreateView):
+    form_class = ScheduleForm
     success_url = "/tasks"
     template_name = "form_template.html"
 
@@ -167,32 +189,12 @@ class AddScheduleView(LoginRequiredMixin, CreateView):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add heading
-        context["f_heading"] = "Schedule Report"
-        return context
-
 
 # TODO: Restrict user to update schedule to next 5-10 minutes
-class UpdateScheduleView(LoginRequiredMixin, UpdateView):
-    model = Schedule
-    fields = ["hours", "minutes"]
+class UpdateScheduleView(SheduleManager, UpdateView):
+    form_class = ScheduleForm
     success_url = "/tasks"
     template_name = "form_template.html"
-
-    # In case anyone calls the url manually check if they are editing there own
-    # schedule
-    def get_queryset(self):
-        return Schedule.objects.filter(user=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
-        context = super().get_context_data(**kwargs)
-        # Add heading
-        context["f_heading"] = "Schedule Report"
-        return context
 
     def form_valid(self, form):
         # get form model
