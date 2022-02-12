@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <body>
+        <!-- Headings -->
+        <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div class="flex items-center justify-between pr-8">
+                    <h2 class="text-3xl font-extrabold text-gray-900">
+                        Hi {{user.get_username}}!!
+                    </h2>
+                    <button onclick="window.location.href='/user/logout'" class="py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Logout
+                    </button>
+                </div>
+                <button onclick="window.location.href='/report'" class="py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                    Configure Report
+                </button>
+                <p class="text-sm italic text-slate-500	">{{complete_count}} of {{total_count}} tasks completed</p>
+                <ul class="nav space-x-20 nav-tabs flex flex-col md:flex-row flex-wrap list-none border-b-0 pl-0 mb-4" id="tabs-tab3"
+                role="tablist">
+                <!-- Filters -->
+                <li class="nav-item" role="presentation">
+                    <a href="/tasks" class="
+                    nav-link
+                    w-full
+                    block
+                    font-medium
+                    text-xs
+                    leading-tight
+                    uppercase
+                    border-x-0 border-t-0 border-b-2 border-transparent
+                    px-6
+                    py-3
+                    my-2
+                    focus:border-transparent
+                    {%if filter is None%}
+                    bg-orange-600
+                    {%endif%}
+                    "
+                    >All</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="/tasks?filter=pending" class="
+                    nav-link
+                    w-full
+                    block
+                    font-medium
+                    text-xs
+                    leading-tight
+                    uppercase
+                    border-x-0 border-t-0 border-b-2 border-transparent
+                    px-6
+                    py-3
+                    my-2
+                    hover:border-transparent hover:bg-gray-100
+                    focus:border-transparent
+                    {%if filter == 'pending'%}
+                    bg-orange-600
+                    {%endif%}
+                    "
+                    
+                    >Pending</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a href="/tasks?filter=completed" class="
+                    nav-link
+                    w-full
+                    block
+                    font-medium
+                    text-xs
+                    leading-tight
+                    uppercase
+                    border-x-0 border-t-0 border-b-2 border-transparent
+                    px-6
+                    py-3
+                    my-2
+                    hover:border-transparent hover:bg-gray-100
+                    focus:border-transparent
+                    {%if filter == 'completed'%}
+                    bg-orange-600
+                    {%endif%}
+                    ">Completed</a>
+                </li>
+                </ul>
+                <!-- task cards -->
+               <div class="pl-5 space-y-5">
+                   {%for task in tasks%}
+                    <div class="flex flex-row block p-6 rounded-lg shadow-lg bg-white max-w-sm justify-between">
+                        <div class="flex flex-col">
+                            {%if task.completed%}
+                            <h5 class="text-red-500 line-through text-xl leading-tight font-medium mb-2">{{task.title}}</h5>
+                            {%else%}
+                            <h5 class="text-gray-900 text-xl leading-tight font-medium mb-2">{{task.title}}</h5>
+                            {%endif%}
+                            <p class="text-gray-700 text-base mb-4">
+                            {{task.created_date}}
+                            </p>
+                        </div>
+                        <div class="flex flex-col space-y-1">
+                            <button onclick="window.location.href='/update-task/{{task.id}}'" type="button" class=" inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out">Edit</button>
+                            <button onclick="window.location.href='/delete-task/{{task.id}}'" type="button" class=" inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">Delete</button>
+                        </div>
+                    </div>
+                    {%endfor%}
+                </div>
+                
+                <!-- Add button -->
+                <button onclick="window.location.href='/create-task'" type="button" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-lg font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+                ADD +
+                </button>
+                
+
+            </div>
+        </div>
+    </body>
+    {%endblock%}

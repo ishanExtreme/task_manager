@@ -1,0 +1,6 @@
+[run]
+source = .
+omit = ./venv/*,*tests*,*migrations*,*asgi*,*wsgi*,*manage.py
+
+[report]
+omit = ./venv/*,*tests*,*migrations*,*asgi*,*wsgi*,*manage.py

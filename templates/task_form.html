@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+    {% block content %}
+    <body>
+        <div class="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8">
+                <div>
+                    <!-- heading -->
+                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        {{f_heading}}
+                    </h2>
+                    <!-- heading end -->
+                </div>
+
+                <form class="mt-8 space-y-6" action="" method="POST">
+                    {% csrf_token %}
+                    <div class="rounded-md shadow-sm -space-y-px">
+                        {%for field in form%}
+                        <div class="mb-3">
+                            <div class="font-serif text-sm italic text-rose-500">
+                                {{field.errors}}
+                            </div>
+                            {%if field.html_name == 'description'%}
+                                <textarea
+                                class="
+                                    form-control
+                                    block
+                                    w-full
+                                    px-3
+                                    py-1.5
+                                    text-base
+                                    font-normal
+                                    text-gray-700
+                                    bg-white bg-clip-padding
+                                    border border-solid border-gray-300
+                                    rounded
+                                    transition
+                                    ease-in-out
+                                    m-0
+                                    focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none
+                                    "
+                                id="{{ field.id_for_label }}"
+                                name="{{ field.html_name }}"
+                                rows="6"
+                                placeholder="Description"
+                                >{%if field.value is not None%}{{field.value}}{%endif%}</textarea>
+                            {%elif field.html_name == 'completed'%}
+                                <div class="form-group form-check text-center mb-6">
+                                    <input type="checkbox"
+                                    class="form-check-input appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-blue-600 checked:border-blue-600 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain mr-2 cursor-pointer"
+                                    id="{{ field.id_for_label }}"
+                                    name="{{ field.html_name }}"
+                                    {%if field.value %}checked{%endif%}
+                                    >
+                                    <label class="form-check-label inline-block text-gray-800" for="{{ field.id_for_label }}">Task Completed</label>
+                                </div>
+                            {%else%}
+                                <input {%if field.value is not None%}value="{{field.value}}"{%endif%} id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{field.field.widget.input_type}}" required class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="{{ field.label }}">
+                            {%endif%}
+                            <div class="font-serif text-sm italic text-sky-500">
+                                {{field.help_text}}
+                            </div>
+                            
+                            <br/>
+                        </div>
+                        {%endfor%}
+                    </div>
+                      <!-- button -->
+                      <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        {{f_heading}}
+                      </button>
+                      <!-- button end -->
+                </form>
+
+            </div>
+        </div>
+    </body>
+    {%endblock%}
+
