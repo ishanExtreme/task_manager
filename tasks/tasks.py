@@ -11,33 +11,7 @@ from django.utils.timezone import make_aware
 from django.db.models import Q
 
 
-def send_email_util(user):
-
-    pending_qs = Task.objects.filter(deleted=False, completed=False, user=user)
-    email_content = f"""Hi {user.get_username()}.
-
-    You have {pending_qs.count()} tasks pending.
-    Here is the full report for your pending tasks:
-
-    """
-    for task in pending_qs:
-        task_history = History.objects.filter(task=task)
-        for history in task_history:
-            email_content += f"{history}\n"
-
-    send_mail(
-        "Task Report from Task Manager",
-        email_content,
-        "task@task_manager.org",
-        [user.email],
-    )
-
-
-# for production envioroment where email sending can fail
-# default_retry_delay=1 * 60, max_retries=3
-@app.task
-def send_email_async(user_id):
-
+def send_email_util(user_id):
     user = None
     try:
         user = User.objects.get(id=user_id)
@@ -46,7 +20,27 @@ def send_email_async(user_id):
     except:
         print("User deleted from database")
         return
-    send_email_util(user)
+
+    all_qs = Task.objects.filter(deleted=False, user=user)
+    pending = all_qs.filter(status=Task.STATUS_CHOICES[0][0]).count()
+    in_progress = all_qs.filter(status=Task.STATUS_CHOICES[1][0]).count()
+    completed = all_qs.filter(status=Task.STATUS_CHOICES[2][0]).count()
+
+    email_content = f"""Hi {user.get_username()}.
+
+    Your task report is shown below:
+    Pending:{pending}
+    INProgress:{in_progress}
+    Completed:{completed}
+
+    """
+
+    send_mail(
+        "Task Report from Task Manager",
+        email_content,
+        "task@task_manager.org",
+        [user.email],
+    )
 
 
 # Flow=>
@@ -88,4 +82,4 @@ def schedule_worker():
         # its right place is after sending email. But this will add
         # extra edge cases for simplicity saving it here
         user_schedule.save()
-        send_email_async.delay(user.id)
+        send_email_util(user.id)
