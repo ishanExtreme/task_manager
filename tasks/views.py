@@ -102,7 +102,7 @@ class TaskCreateForm(ModelForm):
 class AddTaskView(LoginRequiredMixin, CreateView):
     form_class = TaskCreateForm
     template_name = "task_form.html"
-    success_url = "/tasks"
+    success_url = "/tasks/"
 
     def form_valid(self, form):
         # get form model
@@ -124,7 +124,7 @@ class AddTaskView(LoginRequiredMixin, CreateView):
 class UpdateTaskView(AuthorizedTaskManager, UpdateView):
     form_class = TaskCreateForm
     template_name = "task_form.html"
-    success_url = "/tasks"
+    success_url = "/tasks/"
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -137,7 +137,7 @@ class UpdateTaskView(AuthorizedTaskManager, UpdateView):
 class TaskDeleteView(AuthorizedTaskManager, DeleteView):
     model = Task
     template_name = "task_delete.html"
-    success_url = "/tasks"
+    success_url = "/tasks/"
 
 
 # This will handle the schedule update request if schedule doesnot exists
@@ -180,7 +180,7 @@ class SheduleManager(LoginRequiredMixin):
 
 class AddScheduleView(SheduleManager, CreateView):
     form_class = ScheduleForm
-    success_url = "/tasks"
+    success_url = "/tasks/"
     template_name = "form_template.html"
 
     def form_valid(self, form):
@@ -198,7 +198,7 @@ class AddScheduleView(SheduleManager, CreateView):
 # TODO: Restrict user to update schedule to next 5-10 minutes
 class UpdateScheduleView(SheduleManager, UpdateView):
     form_class = ScheduleForm
-    success_url = "/tasks"
+    success_url = "/tasks/"
     template_name = "form_template.html"
 
     def form_valid(self, form):
