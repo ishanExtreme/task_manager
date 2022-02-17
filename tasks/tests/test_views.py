@@ -1,18 +1,12 @@
-from datetime import datetime, time
-from http import client
-from urllib import request, response
+from datetime import time
 from django.test import TestCase
 from django.test import RequestFactory
 from ..views import (
-    UserCreationView,
     TaskListView,
     TaskCreateForm,
     AddTaskView,
-    TaskDeleteView,
-    UpdateTaskView,
 )
 from django.contrib.auth.models import User
-from django.test import Client
 from ..models import Schedule, Task
 
 
