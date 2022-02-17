@@ -26,12 +26,7 @@ def send_email_util(user_id):
     in_progress = all_qs.filter(status=Task.STATUS_CHOICES[1][0]).count()
     completed = all_qs.filter(status=Task.STATUS_CHOICES[2][0]).count()
 
-    email_content = f"""Hi {user.get_username()}.
-    Your task report is shown below:
-    Pending:{pending}
-    INProgress:{in_progress}
-    Completed:{completed}
-    """
+    email_content = f"Hi {user.get_username()}.\nYour task report is shown below:\nPending:{pending}\nINProgress:{in_progress}\nCompleted:{completed}"
 
     send_mail(
         "Task Report from Task Manager",
