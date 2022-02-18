@@ -1,0 +1,3 @@
+-r requirements.txt # Inherits everything from the regular requirements to run the application.
+
+black==X.Y # Adds dev packages on top of the regular requirements.
