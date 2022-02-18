@@ -137,3 +137,6 @@ BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 # email backend to send emails
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
