@@ -27,13 +27,18 @@ from tasks.views import (
     handle_schedule_request,
     UpdateScheduleView,
 )
-
-from tasks.apiviews import TaskViewSet, HistroryViewSet
+from rest_framework.authtoken import views
+from tasks.apiviews import TaskViewSet, HistroryViewSet, UserCreation, UserGet
 
 from rest_framework.routers import SimpleRouter
 from rest_framework_nested import routers
 
 router = SimpleRouter()
+# User api
+router.register("api/user/register", UserCreation)
+router.register("api/user/me", UserGet)
+
+# Task api
 router.register("api/task", TaskViewSet)
 # router.register("api/history", HistroryViewSet)
 
@@ -54,6 +59,7 @@ urlpatterns = (
         path("create-task/", AddTaskView.as_view()),
         path("update-schedule/<pk>/", UpdateScheduleView.as_view()),
         path("report/", handle_schedule_request),
+        path("api/token", views.obtain_auth_token),
     ]
     + router.urls
     + history.urls

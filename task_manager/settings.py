@@ -29,10 +29,10 @@ SECRET_KEY = env(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-# ALLOWED_HOSTS = ["*"]
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
 
 
 # Application definition
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "rest_framework.authtoken",
     "django_filters",
     "tasks",
 ]
@@ -84,22 +85,22 @@ WSGI_APPLICATION = "task_manager.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
-    "default": env.db(
-        "DATABASE_URL",
-        default="postgres:///task_manager",
-    ),
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
-DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
-DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
-DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
+
+# DATABASES = {
+#     "default": env.db(
+#         "DATABASE_URL",
+#         default="postgres:///task_manager",
+#     ),
+# }
+# DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+# DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
+# DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 
 
 # Password validation
@@ -159,3 +160,9 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.TokenAuthentication",
+    ),
+}

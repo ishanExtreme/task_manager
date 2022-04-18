@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from tasks.models import Task, History
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 from rest_framework.viewsets import ModelViewSet, mixins, GenericViewSet
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import (
     DjangoFilterBackend,
     FilterSet,
@@ -19,6 +18,37 @@ class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = ["first_name", "last_name", "username"]
+
+
+class UserCreationSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("username", "email", "password")
+        extra_kwargs = {"password": {"write_only": True}}
+
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+
+
+# Register User
+class UserCreation(mixins.CreateModelMixin, GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserCreationSerializer
+    permission_classes = (AllowAny,)
+
+
+# Get user via token
+class UserGet(mixins.ListModelMixin, GenericViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserCreationSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return User.objects.filter(username=self.request.user.username)
 
 
 class TaskSerializer(ModelSerializer):
