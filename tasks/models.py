@@ -5,6 +5,32 @@ from django.dispatch import receiver
 from django.db import transaction
 
 
+class Board(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
+    deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+
+class Stage(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
+    # One(Board)-Many(Stages) Relationship
+    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    deleted = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+
 class Task(models.Model):
     STATUS_CHOICES = (
         ("PENDING", "PENDING"),
@@ -30,9 +56,12 @@ class Task(models.Model):
     deleted = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     priority = models.IntegerField()
+    # demo field set anything among the option
     status = models.CharField(
         max_length=100, choices=STATUS_CHOICES, default=STATUS_CHOICES[0][0]
     )
+    # One(Stage)-Many(Taks) Relationship
+    stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.title
