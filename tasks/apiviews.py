@@ -1,14 +1,14 @@
-from typing import Generic
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404
 from tasks.models import Task, History, Board, Stage
-from rest_framework.response import Response
 from rest_framework.serializers import (
     ModelSerializer,
     EmailField,
     CharField,
     StringRelatedField,
 )
+from rest_framework.views import APIView
+from rest_framework.renderers import JSONRenderer
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, mixins, GenericViewSet
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django_filters.rest_framework import (
@@ -19,6 +19,32 @@ from django_filters.rest_framework import (
     BooleanFilter,
     DateFilter,
 )
+
+
+class TaskCompletedCountView(APIView):
+    """
+    A view that returns the count of tasks.
+    """
+
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, format=None):
+        task_count = Task.objects.filter(completed=True).count()
+        content = {"count": task_count}
+        return Response(content)
+
+
+class TaskIncompleteCountView(APIView):
+    """
+    A view that returns the count of tasks.
+    """
+
+    renderer_classes = (JSONRenderer,)
+
+    def get(self, request, format=None):
+        task_count = Task.objects.filter(completed=False).count()
+        content = {"count": task_count}
+        return Response(content)
 
 
 class UserSerializer(ModelSerializer):
@@ -82,7 +108,34 @@ class TaskSerializer(ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ["title", "description", "priority", "completed", "stage_name"]
+        fields = [
+            "id",
+            "title",
+            "description",
+            "priority",
+            "completed",
+            "stage_name",
+            "due_date",
+            "created_date",
+        ]
+
+
+class TaskSerializerSuper(ModelSerializer):
+    stage_name = StringRelatedField(source="stage", read_only=True)
+
+    class Meta:
+        model = Task
+        fields = [
+            "id",
+            "title",
+            "description",
+            "priority",
+            "stage",
+            "completed",
+            "stage_name",
+            "due_date",
+            "created_date",
+        ]
 
 
 class HistorySerializer(ModelSerializer):
@@ -94,6 +147,7 @@ class HistorySerializer(ModelSerializer):
 class TaskFilter(FilterSet):
     title = CharFilter(lookup_expr="icontains")
     completed = BooleanFilter()
+    due_date = DateFilter()
 
 
 class HistoryFilter(FilterSet):
@@ -116,7 +170,7 @@ class BoardViewSet(ModelViewSet):
         serializer.save(created_by=self.request.user)
 
 
-class StageViewset(ModelViewSet):
+class StageListView(mixins.ListModelMixin, GenericViewSet):
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
 
@@ -127,18 +181,8 @@ class StageViewset(ModelViewSet):
             deleted=False, board=self.kwargs["board_pk"], created_by=self.request.user
         )
 
-    def perform_create(self, serializer):
-        # serializer.user = self.request.user
-        # serializer.save()
-        board = get_object_or_404(
-            Board.objects.filter(
-                id=self.kwargs["board_pk"], created_by=self.request.user
-            )
-        )
-        serializer.save(created_by=self.request.user, board=board)
 
-
-class StageListView(mixins.ListModelMixin, GenericViewSet):
+class StageViewSet(ModelViewSet):
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
 
@@ -147,8 +191,13 @@ class StageListView(mixins.ListModelMixin, GenericViewSet):
         # __ looks into the field of the foreign key
         return Stage.objects.filter(deleted=False, created_by=self.request.user)
 
+    def perform_create(self, serializer):
+        # serializer.user = self.request.user
+        # serializer.save()
+        serializer.save(created_by=self.request.user)
 
-class TaskViewSet(ModelViewSet):
+
+class TaskViewSet(mixins.ListModelMixin, GenericViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticated,)
@@ -160,13 +209,21 @@ class TaskViewSet(ModelViewSet):
             deleted=False, stage=self.kwargs["stage_pk"], user=self.request.user
         ).order_by("priority")
 
-    def perform_create(self, serializer):
-        stage = get_object_or_404(
-            Stage.objects.filter(
-                id=self.kwargs["stage_pk"], created_by=self.request.user
-            )
+
+class TaskViewSetSuper(ModelViewSet):
+    queryset = Task.objects.all()
+    serializer_class = TaskSerializerSuper
+    permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TaskFilter
+
+    def get_queryset(self):
+        return Task.objects.filter(deleted=False, user=self.request.user).order_by(
+            "completed", "priority"
         )
-        serializer.save(user=self.request.user, stage=stage)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class HistroryViewSet(mixins.ListModelMixin, GenericViewSet):

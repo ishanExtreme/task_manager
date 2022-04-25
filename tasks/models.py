@@ -50,9 +50,10 @@ class Task(models.Model):
         self._prev_state = self.status
 
     title = models.CharField(max_length=100)
-    description = models.TextField()
+    description = models.TextField(max_length=500)
     completed = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now=True)
+    due_date = models.DateField()
     deleted = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     priority = models.IntegerField()

@@ -33,8 +33,11 @@ from tasks.apiviews import (
     StageListView,
     UserCreation,
     UserGet,
-    StageViewset,
+    StageViewSet,
     BoardViewSet,
+    TaskViewSetSuper,
+    TaskCompletedCountView,
+    TaskIncompleteCountView,
 )
 
 from rest_framework.routers import SimpleRouter
@@ -45,7 +48,8 @@ router = SimpleRouter()
 router.register("api/user/register", UserCreation)
 router.register("api/user/me", UserGet)
 router.register("api/board", BoardViewSet)
-router.register("api/stage", StageListView)
+router.register("api/stage", StageViewSet)
+router.register("api/task", TaskViewSetSuper)
 
 # Task api
 # router.register("api/task", TaskViewSet)
@@ -57,7 +61,7 @@ router.register("api/stage", StageListView)
 # history.register("history", HistroryViewSet)
 # Stage route
 stage = routers.NestedSimpleRouter(router, "api/board", lookup="board")
-stage.register("stage", StageViewset)
+stage.register("stage", StageListView)
 # Task route
 task = routers.NestedSimpleRouter(router, "api/stage", lookup="stage")
 task.register("task", TaskViewSet)
@@ -76,6 +80,8 @@ urlpatterns = (
         path("update-schedule/<pk>/", UpdateScheduleView.as_view()),
         path("report/", handle_schedule_request),
         path("api/token", views.obtain_auth_token),
+        path("api/count/task_complete", TaskIncompleteCountView.as_view()),
+        path("api/count/task_incomplete", TaskIncompleteCountView.as_view()),
     ]
     + router.urls
     + stage.urls
