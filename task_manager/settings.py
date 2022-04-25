@@ -168,6 +168,4 @@ REST_FRAMEWORK = {
     ),
 }
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000",
-]
+CORS_ALLOW_ALL_ORIGINS = True
