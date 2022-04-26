@@ -103,6 +103,15 @@ class StageSerializer(ModelSerializer):
         fields = ["id", "title", "description", "board_name"]
 
 
+class StageSerializerSuper(ModelSerializer):
+    title = CharField(min_length=3, max_length=255)
+    board_name = StringRelatedField(source="board", read_only=True)
+
+    class Meta:
+        model = Stage
+        fields = ["id", "title", "description", "board", "board_name"]
+
+
 class TaskSerializer(ModelSerializer):
     stage_name = StringRelatedField(source="stage", read_only=True)
 
@@ -156,10 +165,16 @@ class HistoryFilter(FilterSet):
     new_status = ChoiceFilter(choices=Task.STATUS_CHOICES)
 
 
+class BoardFilter(FilterSet):
+    title = CharFilter(lookup_expr="icontains")
+
+
 class BoardViewSet(ModelViewSet):
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
     permission_classes = (IsAuthenticated,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = BoardFilter
 
     def get_queryset(self):
         return Board.objects.filter(deleted=False, created_by=self.request.user)
@@ -173,6 +188,7 @@ class BoardViewSet(ModelViewSet):
 class StageListView(mixins.ListModelMixin, GenericViewSet):
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         # from nested router doc
@@ -184,7 +200,8 @@ class StageListView(mixins.ListModelMixin, GenericViewSet):
 
 class StageViewSet(ModelViewSet):
     queryset = Stage.objects.all()
-    serializer_class = StageSerializer
+    serializer_class = StageSerializerSuper
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         # from nested router doc
